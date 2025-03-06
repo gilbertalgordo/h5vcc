@@ -1,0 +1,78 @@
+import React, { useState, useEffect } from 'react';
+
+function Thermostat() {
+  const [currentTemperature, setCurrentTemperature] = useState(22); // Initial temperature
+  const [targetTemperature, setTargetTemperature] = useState(20);
+  const [isHeating, setIsHeating] = useState(false);
+  const [isCooling, setIsCooling] = useState(false);
+
+  useEffect(() => {
+    let interval;
+
+    interval = setInterval(() => {
+      setCurrentTemperature((prevTemp) => {
+        if (isHeating && prevTemp < targetTemperature) {
+          return prevTemp + 0.5; // Simulate heating
+        } else if (isCooling && prevTemp > targetTemperature) {
+          return prevTemp - 0.5; // Simulate cooling
+        } else {
+          // Simulate natural temperature change
+          if (prevTemp < targetTemperature) {
+            return prevTemp + 0.1;
+          } else if (prevTemp > targetTemperature) {
+            return prevTemp - 0.1;
+          }
+          return prevTemp;
+        }
+      });
+    }, 1000); // Update every second
+
+    return () => clearInterval(interval); // Cleanup interval
+  }, [targetTemperature, isHeating, isCooling]);
+
+  useEffect(() => {
+    if (currentTemperature < targetTemperature) {
+      setIsHeating(true);
+      setIsCooling(false);
+    } else if (currentTemperature > targetTemperature) {
+      setIsHeating(false);
+      setIsCooling(true);
+    } else {
+      setIsHeating(false);
+      setIsCooling(false);
+    }
+  }, [currentTemperature, targetTemperature]);
+
+  const handleTargetTemperatureChange = (event) => {
+    const newTarget = parseInt(event.target.value);
+    setTargetTemperature(newTarget);
+  };
+
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
+      <h1>Thermostat</h1>
+      <p>Current Temperature: {currentTemperature.toFixed(1)}°C</p>
+      <label>
+        Target Temperature:
+        <input
+          type="number"
+          value={targetTemperature}
+          onChange={handleTargetTemperatureChange}
+          min="15"
+          max="30"
+        />
+      </label>
+      <p>
+        Status: {isHeating ? 'Heating' : isCooling ? 'Cooling' : 'Idle'}
+      </p>
+      <div style={{marginTop: '20px'}}>
+        <div style={{width: '200px', height: '20px', backgroundColor: 'lightgray', position: 'relative'}}>
+          <div style={{width: `${(currentTemperature-10)*3.33}%`, height: '100%', backgroundColor: isHeating ? 'red' : isCooling ? 'blue' : 'gray'}}></div>
+        </div>
+        <p>Temperature Visual</p>
+      </div>
+    </div>
+  );
+}
+
+export default Thermostat;
