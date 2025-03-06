@@ -1,0 +1,137 @@
+import React, { useState, useEffect } from 'react';
+
+const AdvanceAntispy = () => {
+  const [isClipboardAccessed, setIsClipboardAccessed] = useState(false);
+  const [isCameraAccessed, setIsCameraAccessed] = useState(false);
+  const [isMicrophoneAccessed, setIsMicrophoneAccessed] = useState(false);
+  const [isLocationAccessed, setIsLocationAccessed] = useState(false);
+  const [isScreenShared, setIsScreenShared] = useState(false);
+  const [isIdle, setIsIdle] = useState(true);
+  const [idleTimer, setIdleTimer] = useState(null);
+
+  const IDLE_TIMEOUT = 60000; // 1 minute of inactivity
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        console.log('Tab Hidden');
+        // Additional logic when the tab is hidden (e.g., clear sensitive data)
+      } else {
+        console.log('Tab Visible');
+        // Additional logic when the tab is visible
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    const checkClipboardAccess = async () => {
+      try {
+        await navigator.clipboard.readText();
+        setIsClipboardAccessed(true);
+      } catch (error) {
+        setIsClipboardAccessed(false);
+      }
+    };
+
+    const checkCameraAccess = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach((track) => track.stop());
+        setIsCameraAccessed(true);
+      } catch (error) {
+        setIsCameraAccessed(false);
+      }
+    };
+
+    const checkMicrophoneAccess = async () => {
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        stream.getTracks().forEach((track) => track.stop());
+        setIsMicrophoneAccessed(true);
+      } catch (error) {
+        setIsMicrophoneAccessed(false);
+      }
+    };
+
+    const checkLocationAccess = async () => {
+      if ('geolocation' in navigator) {
+        try {
+          await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 5000 });
+          });
+          setIsLocationAccessed(true);
+        } catch (error) {
+          setIsLocationAccessed(false);
+        }
+      } else {
+        setIsLocationAccessed(false);
+      }
+    };
+
+    const checkScreenSharing = async () => {
+      try {
+        await navigator.mediaDevices.getDisplayMedia({ video: true });
+        setIsScreenShared(true);
+      } catch (error) {
+        setIsScreenShared(false);
+      }
+    };
+
+    checkClipboardAccess();
+    checkCameraAccess();
+    checkMicrophoneAccess();
+    checkLocationAccess();
+    checkScreenSharing();
+  }, []);
+
+  useEffect(() => {
+    const resetIdleTimer = () => {
+      setIsIdle(false);
+      clearTimeout(idleTimer);
+      setIdleTimer(setTimeout(() => setIsIdle(true), IDLE_TIMEOUT));
+    };
+
+    const handleUserActivity = () => {
+      resetIdleTimer();
+    };
+
+    window.addEventListener('mousemove', handleUserActivity);
+    window.addEventListener('keydown', handleUserActivity);
+    window.addEventListener('click', handleUserActivity);
+    window.addEventListener('touchstart', handleUserActivity);
+
+    resetIdleTimer(); // Initial call to set up the timer
+
+    return () => {
+      window.removeEventListener('mousemove', handleUserActivity);
+      window.removeEventListener('keydown', handleUserActivity);
+      window.removeEventListener('click', handleUserActivity);
+      window.removeEventListener('touchstart', handleUserActivity);
+      clearTimeout(idleTimer);
+    };
+  }, [idleTimer]);
+
+  return (
+    <div>
+      <h2>Advanced Anti-Spy Features</h2>
+      <p>Clipboard Accessed: {isClipboardAccessed ? 'Yes' : 'No'}</p>
+      <p>Camera Accessed: {isCameraAccessed ? 'Yes' : 'No'}</p>
+      <p>Microphone Accessed: {isMicrophoneAccessed ? 'Yes' : 'No'}</p>
+      <p>Location Accessed: {isLocationAccessed ? 'Yes' : 'No'}</p>
+      <p>Screen Shared: {isScreenShared ? 'Yes' : 'No'}</p>
+      <p>User Idle: {isIdle ? 'Yes' : 'No'}</p>
+
+      {isIdle && <p style={{ color: 'red' }}>User is idle. Consider locking sensitive data.</p>}
+
+      {/* Add more advanced detection logic here, like network monitoring, etc. */}
+    </div>
+  );
+};
+
+export default AdvanceAntispy;
