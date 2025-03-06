@@ -1,0 +1,95 @@
+import React, { useState, useEffect } from 'react';
+
+function CoolingSystem() {
+  const [temperature, setTemperature] = useState(25); // Initial temperature
+  const [coolingEnabled, setCoolingEnabled] = useState(false);
+  const [targetTemperature, setTargetTemperature] = useState(20);
+  const [fanSpeed, setFanSpeed] = useState(0); // 0: off, 1: low, 2: medium, 3: high
+
+  useEffect(() => {
+    let interval;
+
+    if (coolingEnabled) {
+      interval = setInterval(() => {
+        setTemperature((prevTemp) => {
+          if (prevTemp > targetTemperature) {
+            const newTemp = prevTemp - 0.5; // Simulate cooling
+            return newTemp < targetTemperature ? targetTemperature : newTemp;
+          } else if (prevTemp < targetTemperature) {
+            const newTemp = prevTemp + 0.2; // Simulate natural heating
+            return newTemp > targetTemperature ? targetTemperature : newTemp;
+          } else {
+            return prevTemp;
+          }
+        });
+      }, 1000); // Update every second
+    } else {
+      interval = setInterval(() => {
+          setTemperature((prevTemp) => prevTemp + 0.1); // Simulate natural heating
+      }, 1000)
+    }
+
+    return () => clearInterval(interval); // Cleanup interval on unmount or coolingEnabled change
+  }, [coolingEnabled, targetTemperature]);
+
+  useEffect(() => {
+    if (coolingEnabled && temperature > targetTemperature) {
+      if (temperature - targetTemperature > 5) {
+        setFanSpeed(3); // High fan speed
+      } else if (temperature - targetTemperature > 3) {
+        setFanSpeed(2); // Medium fan speed
+      } else {
+        setFanSpeed(1); // Low fan speed
+      }
+    } else {
+      setFanSpeed(0); // Turn off fan
+    }
+  }, [temperature, targetTemperature, coolingEnabled]);
+
+  const handleCoolingToggle = () => {
+    setCoolingEnabled(!coolingEnabled);
+  };
+
+  const handleTargetTemperatureChange = (event) => {
+    const newTarget = parseInt(event.target.value);
+    setTargetTemperature(newTarget);
+  };
+
+  const fanSpeedLabels = {
+    0: 'Off',
+    1: 'Low',
+    2: 'Medium',
+    3: 'High',
+  };
+
+  return (
+    <div style={{ fontFamily: 'sans-serif', padding: '20px' }}>
+      <h1>Cooling System</h1>
+      <p>Current Temperature: {temperature.toFixed(1)}°C</p>
+      <label>
+        Target Temperature:
+        <input
+          type="number"
+          value={targetTemperature}
+          onChange={handleTargetTemperatureChange}
+          min="15"
+          max="30"
+        />
+      </label>
+      <br />
+      <button onClick={handleCoolingToggle}>
+        {coolingEnabled ? 'Turn Off Cooling' : 'Turn On Cooling'}
+      </button>
+      <p>Cooling: {coolingEnabled ? 'Enabled' : 'Disabled'}</p>
+      <p>Fan Speed: {fanSpeedLabels[fanSpeed]}</p>
+      <div style={{marginTop: '20px'}}>
+        <div style={{width: '200px', height: '20px', backgroundColor: 'lightblue', position: 'relative'}}>
+          <div style={{width: `${(temperature-10)*3.33}%`, height: '100%', backgroundColor: 'red'}}></div>
+        </div>
+        <p>Temperature Visual</p>
+      </div>
+    </div>
+  );
+}
+
+export default CoolingSystem;
