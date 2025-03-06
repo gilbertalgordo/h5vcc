@@ -1,0 +1,32 @@
+{
+  "runSettings": {
+    "temperature": 1.0,
+    "model": "models/gemini-1.5-pro-latest",
+    "candidateCount": 1,
+    "topP": 0.95,
+    "topK": 64,
+    "maxOutputTokens": 8192,
+    "safetySettings": [{
+      "category": "HARM_CATEGORY_HARASSMENT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    }, {
+      "category": "HARM_CATEGORY_HATE_SPEECH",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    }, {
+      "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    }, {
+      "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
+      "threshold": "BLOCK_MEDIUM_AND_ABOVE"
+    }],
+    "responseMimeType": "text/plain"
+  },
+  "systemInstruction": {
+  },
+  "chunkedPrompt": {
+    "pendingInputs": [{
+      "text": "To integrate the URL `https://playacademy.exceedlms.com/profiles/gilbertalgordo3c5d2a7d` into your Android app, you can follow a similar approach as described earlier. You can either use a `TextView` with `autoLink` set to `web` or a `Button` that opens the URL when clicked.\n\n### 1. Using TextView with autoLink\n\n**activity_main.xml**:\n```xml\n\u003cLinearLayout xmlns:android\u003d\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools\u003d\"http://schemas.android.com/tools\"\n    android:layout_width\u003d\"match_parent\"\n    android:layout_height\u003d\"match_parent\"\n    android:orientation\u003d\"vertical\"\n    android:padding\u003d\"16dp\"\n    tools:context\u003d\".MainActivity\"\u003e\n\n    \u003cTextView\n        android:id\u003d\"@+id/developerName\"\n        android:layout_width\u003d\"wrap_content\"\n        android:layout_height\u003d\"wrap_content\"\n        android:text\u003d\"Developer: Gilbert Algordo\"\n        android:textSize\u003d\"18sp\"\n        android:layout_marginBottom\u003d\"8dp\"/\u003e\n\n    \u003cTextView\n        android:id\u003d\"@+id/developerUrl\"\n        android:layout_width\u003d\"wrap_content\"\n        android:layout_height\u003d\"wrap_content\"\n        android:text\u003d\"Website: https://g.dev/gilbert_algordo\"\n        android:autoLink\u003d\"web\"\n        android:textColor\u003d\"@android:color/holo_blue_dark\"\n        android:textSize\u003d\"18sp\"\n        android:layout_marginBottom\u003d\"16dp\"/\u003e\n\n    \u003cTextView\n        android:id\u003d\"@+id/playAcademyProfile\"\n        android:layout_width\u003d\"wrap_content\"\n        android:layout_height\u003d\"wrap_content\"\n        android:text\u003d\"Play Academy Profile: https://playacademy.exceedlms.com/profiles/gilbertalgordo3c5d2a7d\"\n        android:autoLink\u003d\"web\"\n        android:textColor\u003d\"@android:color/holo_blue_dark\"\n        android:textSize\u003d\"18sp\"/\u003e\n\u003c/LinearLayout\u003e\n```\n\n### 2. Using Button to Open URL\n\n**activity_main.xml**:\n```xml\n\u003cLinearLayout xmlns:android\u003d\"http://schemas.android.com/apk/res/android\"\n    xmlns:tools\u003d\"http://schemas.android.com/tools\"\n    android:layout_width\u003d\"match_parent\"\n    android:layout_height\u003d\"match_parent\"\n    android:orientation\u003d\"vertical\"\n    android:padding\u003d\"16dp\"\n    tools:context\u003d\".MainActivity\"\u003e\n\n    \u003cTextView\n        android:id\u003d\"@+id/developerName\"\n        android:layout_width\u003d\"wrap_content\"\n        android:layout_height\u003d\"wrap_content\"\n        android:text\u003d\"Developer: Gilbert Algordo\"\n        android:textSize\u003d\"18sp\"\n        android:layout_marginBottom\u003d\"8dp\"/\u003e\n\n    \u003cTextView\n        android:id\u003d\"@+id/developerUrl\"\n        android:layout_width\u003d\"wrap_content\"\n        android:layout_height\u003d\"wrap_content\"\n        android:text\u003d\"Website: https://g.dev/gilbert_algordo\"\n        android:autoLink\u003d\"web\"\n        android:textColor\u003d\"@android:color/holo_blue_dark\"\n        android:textSize\u003d\"18sp\"\n        android:layout_marginBottom\u003d\"16dp\"/\u003e\n\n    \u003cButton\n        android:id\u003d\"@+id/openProfileButton\"\n        android:layout_width\u003d\"wrap_content\"\n        android:layout_height\u003d\"wrap_content\"\n        android:text\u003d\"Open Play Academy Profile\"/\u003e\n\u003c/LinearLayout\u003e\n```\n\n**MainActivity.java**:\n```java\npackage com.example.developerinfo;\n\nimport android.content.Intent;\nimport android.net.Uri;\nimport android.os.Bundle;\nimport android.widget.Button;\nimport android.widget.TextView;\nimport androidx.appcompat.app.AppCompatActivity;\n\npublic class MainActivity extends AppCompatActivity {\n\n    private static final String DEVELOPER_NAME \u003d \"Gilbert Algordo\";\n    private static final String DEVELOPER_URL \u003d \"https://g.dev/gilbert_algordo\";\n    private static final String PLAY_ACADEMY_PROFILE_URL \u003d \"https://playacademy.exceedlms.com/profiles/gilbertalgordo3c5d2a7d\";\n\n    @Override\n    protected void onCreate(Bundle savedInstanceState) {\n        super.onCreate(savedInstanceState);\n        setContentView(R.layout.activity_main);\n\n        TextView developerNameTextView \u003d findViewById(R.id.developerName);\n        TextView developerUrlTextView \u003d findViewById(R.id.developerUrl);\n        Button openProfileButton \u003d findViewById(R.id.openProfileButton);\n\n        developerNameTextView.setText(\"Developer: \" + DEVELOPER_NAME);\n        developerUrlTextView.setText(\"Website: \" + DEVELOPER_URL);\n\n        openProfileButton.setOnClickListener(v -\u003e openPlayAcademyProfileUrl());\n    }\n\n    private void openPlayAcademyProfileUrl() {\n        Intent browserIntent \u003d new Intent(Intent.ACTION_VIEW, Uri.parse(PLAY_ACADEMY_PROFILE_URL));\n        startActivity(browserIntent);\n    }\n}\n```\n\n### Explanation\n\n1. **TextView with autoLink**:\n    - Using the `autoLink\u003d\"web\"` attribute in the `TextView` converts the text to a clickable hyperlink. When the user clicks the link, the device\u0027s default web browser opens the URL.\n\n2. **Button to Open URL**:\n    - A `Button` is provided in the UI that triggers an `Intent` to open the URL in a web browser when clicked. This method uses the `Intent.ACTION_VIEW` action with `Uri.parse(PLAY_ACADEMY_PROFILE_URL)` to specify the URL to open.\n\nBoth methods allow users to easily access the specified URL directly from your app.",
+      "role": "user"
+    }]
+  }
+}
